@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindGrid AI — Master Artificial Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+:root{
+  --navy:#0a0f1e;--navy2:#0d1526;--navy3:#111d35;
+  --card:#131c30;--card2:#182240;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --blue:#2563eb;--blue2:#3b82f6;--blue-glow:rgba(37,99,235,0.25);
+  --cyan:#06b6d4;--cyan2:#22d3ee;
+  --gold:#f59e0b;--gold2:#fbbf24;
+  --green:#10b981;--green2:#34d399;
+  --red:#ef4444;
+  --text:#f8fafc;--text2:#94a3b8;--text3:#475569;
+  --white:#ffffff;
+  --radius:14px;--radius-sm:8px;--radius-lg:20px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --shadow-lg:0 20px 60px rgba(0,0,0,0.6);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--navy);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;min-height:100vh}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(–navy)}
+::-webkit-scrollbar-thumb{background:var(–card2);border-radius:3px}
+
+/* ── UTILS ── */
+.container{max-width:1240px;margin:0 auto;padding:0 40px}
+@media(max-width:768px){.container{padding:0 20px}}
+.serif{font-family:‘Fraunces’,serif}
+.mono{font-family:‘JetBrains Mono’,monospace}
+.gradient-text{background:linear-gradient(135deg,var(–blue2),var(–cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gold-text{background:linear-gradient(135deg,var(–gold),var(–gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-family:‘JetBrains Mono’,monospace}
+.tag-blue{background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.3);color:var(–blue2)}
+.tag-green{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:var(–green2)}
+.tag-gold{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:var(–gold2)}
+.tag-cyan{background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.25);color:var(–cyan2)}
+.tag-gray{background:rgba(255,255,255,.06);border:1px solid var(–border);color:var(–text2)}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:.65rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-family:‘JetBrains Mono’,monospace}
+.badge-free{background:rgba(16,185,129,.15);color:var(–green2);border:1px solid rgba(16,185,129,.3)}
+.badge-pro{background:rgba(37,99,235,.15);color:var(–blue2);border:1px solid rgba(37,99,235,.3)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes dot{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px var(–blue-glow)}50%{box-shadow:0 0 40px var(–blue-glow),0 0 60px var(–blue-glow)}}
+
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* ══════════════════════════════════
+NAV
+══════════════════════════════════ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:300;height:68px;display:flex;align-items:center;border-bottom:1px solid var(–border);background:rgba(10,15,30,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transition:background .3s}
+.nav-inner{display:flex;align-items:center;gap:0;width:100%}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;flex-shrink:0}
+.nav-logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(–blue),var(–cyan));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:800;color:#fff;letter-spacing:-.02em;flex-shrink:0;box-shadow:0 2px 12px rgba(37,99,235,.4)}
+.nav-logo-text{font-size:1.05rem;font-weight:800;color:var(–text);letter-spacing:-.02em}
+.nav-logo-text span{color:var(–blue2)}
+.nav-links{display:flex;align-items:center;gap:2px;margin-left:40px;list-style:none}
+.nav-links li a{padding:6px 14px;border-radius:8px;font-size:.85rem;font-weight:500;color:var(–text2);text-decoration:none;transition:all .2s;cursor:pointer;display:block}
+.nav-links li a:hover{color:var(–text);background:rgba(255,255,255,.06)}
+.nav-actions{display:flex;align-items:center;gap:10px;margin-left:auto}
+.btn-nav-ghost{padding:8px 18px;border-radius:8px;font-size:.85rem;font-weight:600;color:var(–text);background:transparent;border:1px solid var(–border2);cursor:pointer;transition:all .2s;font-family:‘Plus Jakarta Sans’,sans-serif}
+.btn-nav-ghost:hover{background:rgba(255,255,255,.06)}
+.btn-nav-primary{padding:8px 20px;border-radius:8px;font-size:.85rem;font-weight:700;color:#fff;background:var(–blue);border:none;cursor:pointer;transition:all .2s;font-family:‘Plus Jakarta Sans’,sans-serif}
+.btn-nav-primary:hover{background:var(–blue2);box-shadow:0 4px 16px rgba(37,99,235,.4);transform:translateY(-1px)}
+@media(max-width:768px){.nav-links{display:none}.nav-logo-text{font-size:.95rem}}
+
+/* ══════════════════════════════════
+HERO
+══════════════════════════════════ */
+.hero{padding:140px 0 80px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(37,99,235,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,.04) 1px,transparent 1px);background-size:48px 48px}
+.hero-glow{position:absolute;width:900px;height:600px;left:50%;top:-100px;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(37,99,235,.12) 0%,transparent 70%);pointer-events:none}
+.hero-glow2{position:absolute;width:400px;height:400px;right:-100px;top:100px;background:radial-gradient(circle,rgba(6,182,212,.08) 0%,transparent 70%)}
+.hero-content{text-align:center;position:relative;z-index:1}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.25);border-radius:100px;font-size:.75rem;font-weight:600;color:var(–blue2);font-family:‘JetBrains Mono’,monospace;letter-spacing:.06em;margin-bottom:28px;animation:fadeUp .8s ease both}
+.hero-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(–blue2);animation:pulse 2s infinite}
+.hero-h1{font-size:clamp(2.8rem,6.5vw,5.2rem);font-weight:800;letter-spacing:-.04em;line-height:1;margin-bottom:24px;animation:fadeUp .8s .08s ease both}
+.hero-h1 .serif-line{font-family:‘Fraunces’,serif;font-style:italic;font-weight:300;background:linear-gradient(135deg,var(–blue2) 0%,var(–cyan2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{max-width:580px;margin:0 auto 40px;font-size:1.1rem;font-weight:400;color:var(–text2);line-height:1.75;animation:fadeUp .8s .16s ease both}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp .8s .24s ease both;margin-bottom:60px}
+.btn-primary-lg{display:inline-flex;align-items:center;gap:10px;padding:15px 32px;background:var(–blue);color:#fff;font-weight:700;font-size:1rem;border:none;border-radius:12px;cursor:pointer;transition:all .25s;font-family:‘Plus Jakarta Sans’,sans-serif;text-decoration:none;letter-spacing:-.01em}
+.btn-primary-lg:hover{background:var(–blue2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(37,99,235,.45)}
+.btn-ghost-lg{display:inline-flex;align-items:center;gap:10px;padding:15px 32px;background:rgba(255,255,255,.06);color:var(–text);font-weight:600;font-size:1rem;border:1px solid var(–border2);border-radius:12px;cursor:pointer;transition:all .25s;font-family:‘Plus Jakarta Sans’,sans-serif;text-decoration:none}
+.btn-ghost-lg:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+
+/* HERO STATS STRIP */
+.hero-stats-strip{display:flex;align-items:center;justify-content:center;gap:48px;padding:28px 0;border-top:1px solid var(–border);border-bottom:1px solid var(–border);flex-wrap:wrap;animation:fadeUp .8s .32s ease both}
+.h-stat{text-align:center}
+.h-stat-num{font-size:2rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+.h-stat-label{font-size:.75rem;color:var(–text3);margin-top:3px;font-family:‘JetBrains Mono’,monospace;letter-spacing:.04em}
+
+/* MARQUEE */
+.marquee-strip{padding:18px 0;background:var(–navy2);border-top:1px solid var(–border);border-bottom:1px solid var(–border);overflow:hidden}
+.marquee-track{display:flex;gap:0;animation:marquee 30s linear infinite;white-space:nowrap;width:max-content}
+.marquee-item{display:inline-flex;align-items:center;gap:8px;padding:0 32px;font-size:.78rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace;letter-spacing:.04em}
+.marquee-dot{width:4px;height:4px;border-radius:50%;background:var(–blue2);flex-shrink:0}
+
+/* ══════════════════════════════════
+TRUST BAR
+══════════════════════════════════ */
+.trust-bar{padding:60px 0;border-bottom:1px solid var(–border)}
+.trust-label{text-align:center;font-size:.78rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace;letter-spacing:.06em;margin-bottom:32px}
+.trust-logos{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap}
+.trust-logo{font-size:.9rem;font-weight:700;color:var(–text3);opacity:.5;transition:opacity .2s;letter-spacing:-.01em}
+.trust-logo:hover{opacity:.8}
+
+/* ══════════════════════════════════
+SECTION COMMON
+══════════════════════════════════ */
+.section{padding:100px 0}
+.section-sm{padding:70px 0}
+.s-tag{display:inline-block;font-size:.7rem;font-weight:700;color:var(–blue2);letter-spacing:.1em;text-transform:uppercase;font-family:‘JetBrains Mono’,monospace;margin-bottom:12px}
+.s-title{font-size:clamp(1.9rem,3.5vw,2.9rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:16px}
+.s-desc{font-size:1.05rem;color:var(–text2);line-height:1.75;max-width:520px}
+.s-header{margin-bottom:60px}
+.s-header.center{text-align:center}
+.s-header.center .s-desc{margin:0 auto}
+
+/* ══════════════════════════════════
+TRACKS / COURSES
+══════════════════════════════════ */
+.tracks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:1024px){.tracks-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.tracks-grid{grid-template-columns:1fr}}
+
+.course-card{background:var(–card);border:1px solid var(–border);border-radius:var(–radius-lg);overflow:hidden;transition:all .3s cubic-bezier(.22,1,.36,1);cursor:pointer;position:relative;display:flex;flex-direction:column}
+.course-card:hover{border-color:var(–border2);transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.course-thumb{height:148px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.course-thumb-emoji{font-size:3rem;position:relative;z-index:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));animation:float 4s ease-in-out infinite}
+.course-badge-wrap{position:absolute;top:14px;left:14px;z-index:2}
+.course-pro-lock{position:absolute;inset:0;background:rgba(10,15,30,.82);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;opacity:0;transition:opacity .3s;z-index:10;border-radius:0}
+.course-card:hover .course-pro-lock{opacity:1}
+.lock-cta{padding:9px 22px;background:var(–blue);color:#fff;border:none;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:‘Plus Jakarta Sans’,sans-serif;transition:all .2s}
+.lock-cta:hover{background:var(–blue2);transform:translateY(-1px)}
+.lock-label{font-size:.75rem;color:rgba(255,255,255,.6);font-family:‘JetBrains Mono’,monospace}
+.course-body{padding:22px;flex:1;display:flex;flex-direction:column}
+.course-track{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:‘JetBrains Mono’,monospace;margin-bottom:8px}
+.course-title{font-size:1rem;font-weight:700;margin-bottom:10px;line-height:1.3;letter-spacing:-.01em}
+.course-desc{font-size:.83rem;color:var(–text2);line-height:1.6;margin-bottom:18px;flex:1}
+.course-meta{display:flex;align-items:center;gap:12px;padding-top:16px;border-top:1px solid var(–border)}
+.course-meta-item{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace}
+.course-rating{display:flex;align-items:center;gap:4px;margin-left:auto}
+.stars{color:var(–gold);font-size:.72rem;letter-spacing:1px}
+.rating-num{font-size:.72rem;font-weight:600;color:var(–text2)}
+
+/* ══════════════════════════════════
+LEARNING ROOM
+══════════════════════════════════ */
+.learn-room{background:var(–navy2);border-top:1px solid var(–border);border-bottom:1px solid var(–border);padding:80px 0}
+.learn-layout{display:grid;grid-template-columns:1fr 380px;gap:28px;align-items:start}
+@media(max-width:1024px){.learn-layout{grid-template-columns:1fr}}
+
+/* Video Player */
+.player-shell{background:var(–card);border:1px solid var(–border);border-radius:var(–radius-lg);overflow:hidden;box-shadow:var(–shadow-lg)}
+.player-header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:rgba(0,0,0,.3);border-bottom:1px solid var(–border)}
+.player-dots{display:flex;gap:6px}
+.player-dot{width:11px;height:11px;border-radius:50%}
+.player-dot:nth-child(1){background:#ff5f57}
+.player-dot:nth-child(2){background:#febc2e}
+.player-dot:nth-child(3){background:#28c840}
+.player-url{flex:1;background:rgba(255,255,255,.06);border-radius:6px;padding:5px 12px;font-size:.72rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace}
+.player-secure{font-size:.65rem;color:var(–green2);font-family:‘JetBrains Mono’,monospace;display:flex;align-items:center;gap:4px}
+.video-wrap{position:relative;padding-top:56.25%;background:#000;overflow:hidden}
+.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid-overlay-top{position:absolute;top:0;left:0;right:0;height:52px;background:linear-gradient(to bottom,rgba(10,15,30,.95),transparent);pointer-events:none;z-index:5}
+.vid-overlay-bot{position:absolute;bottom:0;left:0;right:0;height:64px;background:linear-gradient(to top,rgba(10,15,30,.98),transparent);pointer-events:none;z-index:5}
+.vid-loading{position:absolute;inset:0;background:var(–navy3);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:15;transition:opacity .6s}
+.vid-loading.gone{opacity:0;pointer-events:none}
+.vid-spinner{width:40px;height:40px;border:3px solid var(–card2);border-top-color:var(–blue2);border-radius:50%;animation:spin .8s linear infinite}
+.vid-spinner-label{font-size:.72rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace}
+.player-info{padding:20px 24px;border-top:1px solid var(–border)}
+.player-info-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.player-lesson-title{font-size:1.15rem;font-weight:700;letter-spacing:-.02em;margin-bottom:6px;line-height:1.3}
+.player-lesson-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.player-meta-chip{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace}
+.player-actions{display:flex;gap:8px;flex-shrink:0}
+.player-btn{padding:8px 18px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:‘Plus Jakarta Sans’,sans-serif;border:none}
+.player-btn-primary{background:var(–blue);color:#fff}
+.player-btn-primary:hover{background:var(–blue2)}
+.player-btn-ghost{background:rgba(255,255,255,.07);color:var(–text2);border:1px solid var(–border)}
+.player-btn-ghost:hover{background:rgba(255,255,255,.12);color:var(–text)}
+
+/* AI NOTES */
+.ai-notes{padding:20px 24px;background:rgba(37,99,235,.04);border-top:1px solid var(–border)}
+.ai-notes-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ai-notes-icon{width:28px;height:28px;background:linear-gradient(135deg,var(–blue),var(–cyan));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
+.ai-notes-title{font-size:.8rem;font-weight:700;color:var(–text)}
+.ai-notes-badge{font-size:.6rem;font-family:‘JetBrains Mono’,monospace;padding:2px 7px;border-radius:4px;background:rgba(37,99,235,.15);color:var(–blue2);border:1px solid rgba(37,99,235,.25);margin-left:auto}
+.ai-notes-body{font-size:.83rem;color:var(–text2);line-height:1.8}
+.ai-notes-body strong{color:var(–text);font-weight:600}
+.notes-point{display:flex;gap:10px;margin-bottom:12px}
+.notes-bullet{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;margin-top:1px}
+
+/* RIGHT SIDEBAR */
+.learn-sidebar{display:flex;flex-direction:column;gap:16px}
+
+/* Lesson Playlist */
+.playlist{background:var(–card);border:1px solid var(–border);border-radius:var(–radius-lg);overflow:hidden}
+.playlist-header{padding:16px 20px;border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between}
+.playlist-title{font-size:.85rem;font-weight:700}
+.playlist-progress{font-size:.7rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace}
+.playlist-progress-bar{height:3px;background:var(–navy3);margin:12px 20px;border-radius:2px;overflow:hidden}
+.playlist-progress-fill{height:100%;background:linear-gradient(90deg,var(–blue),var(–cyan));border-radius:2px;width:25%;transition:width .6s}
+.playlist-list{max-height:380px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(–card2) transparent}
+.playlist-item{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .2s;position:relative}
+.playlist-item:last-child{border:none}
+.playlist-item:hover{background:rgba(255,255,255,.04)}
+.playlist-item.active{background:rgba(37,99,235,.1)}
+.playlist-item.active::before{content:’’;position:absolute;left:0;top:0;bottom:0;width:3px;background:var(–blue2);border-radius:0 2px 2px 0}
+.pl-num{font-size:.68rem;font-family:‘JetBrains Mono’,monospace;color:var(–text3);width:20px;flex-shrink:0;text-align:center}
+.pl-thumb{width:32px;height:32px;border-radius:6px;background:rgba(255,255,255,.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.pl-info{flex:1;min-width:0}
+.pl-name{font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.pl-meta{font-size:.65rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace}
+.pl-status{font-size:.8rem;flex-shrink:0}
+.pl-lock{font-size:.75rem;color:var(–text3)}
+
+/* AI TUTOR */
+.tutor-shell{background:var(–card);border:1px solid var(–border);border-radius:var(–radius-lg);overflow:hidden;display:flex;flex-direction:column}
+.tutor-header{padding:14px 18px;background:rgba(37,99,235,.08);border-bottom:1px solid var(–border);display:flex;align-items:center;gap:10px}
+.tutor-avatar{width:34px;height:34px;background:linear-gradient(135deg,var(–blue),var(–cyan));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;box-shadow:0 0 0 3px rgba(37,99,235,.2)}
+.tutor-name{font-size:.85rem;font-weight:700}
+.tutor-status{font-size:.65rem;color:var(–green2);font-family:‘JetBrains Mono’,monospace;display:flex;align-items:center;gap:4px}
+.tutor-status::before{content:’’;width:5px;height:5px;border-radius:50%;background:var(–green2);display:inline-block;animation:pulse 2s infinite}
+.tutor-powered{font-size:.6rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace;margin-left:auto;padding:2px 8px;background:rgba(255,255,255,.04);border-radius:4px;border:1px solid var(–border)}
+.tutor-messages{height:360px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;scrollbar-width:thin;scrollbar-color:var(–card2) transparent}
+.t-msg{display:flex;flex-direction:column;max-width:88%}
+.t-msg-ai{align-self:flex-start}
+.t-msg-user{align-self:flex-end}
+.t-msg-label{font-size:.6rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace;margin-bottom:5px;padding-left:2px}
+.t-msg-user .t-msg-label{text-align:right;padding-left:0;padding-right:2px}
+.t-bubble{padding:11px 15px;border-radius:14px;font-size:.82rem;line-height:1.65}
+.t-msg-ai .t-bubble{background:var(–card2);border:1px solid var(–border);color:var(–text);border-bottom-left-radius:4px}
+.t-msg-user .t-bubble{background:var(–blue);color:#fff;border-bottom-right-radius:4px;font-weight:500}
+.t-typing{display:flex;gap:5px;align-items:center;padding:11px 16px;background:var(–card2);border:1px solid var(–border);border-radius:14px;border-bottom-left-radius:4px;width:fit-content}
+.t-dot{width:7px;height:7px;border-radius:50%;background:var(–text3);animation:dot 1.2s ease infinite}
+.t-dot:nth-child(2){animation-delay:.15s}
+.t-dot:nth-child(3){animation-delay:.3s}
+.tutor-suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px;border-top:1px solid var(–border)}
+.t-suggestion{font-size:.7rem;padding:5px 11px;background:rgba(255,255,255,.05);border:1px solid var(–border);border-radius:6px;cursor:pointer;color:var(–text2);transition:all .2s;font-family:‘JetBrains Mono’,monospace}
+.t-suggestion:hover{border-color:var(–blue2);color:var(–blue2);background:rgba(37,99,235,.08)}
+.tutor-input-wrap{padding:12px 16px;border-top:1px solid var(–border);display:flex;gap:8px;align-items:flex-end}
+.tutor-input{flex:1;background:var(–navy3);border:1px solid var(–border2);border-radius:10px;padding:10px 14px;color:var(–text);font-family:‘Plus Jakarta Sans’,sans-serif;font-size:.82rem;outline:none;resize:none;max-height:100px;transition:border-color .2s;line-height:1.5}
+.tutor-input:focus{border-color:var(–blue2);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.tutor-input::placeholder{color:var(–text3)}
+.tutor-send{width:38px;height:38px;background:var(–blue);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.tutor-send:hover{background:var(–blue2);transform:scale(1.05)}
+.tutor-send:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ══════════════════════════════════
+CURRICULUM
+══════════════════════════════════ */
+.curriculum-layout{display:grid;grid-template-columns:1fr 380px;gap:60px;align-items:start}
+@media(max-width:1024px){.curriculum-layout{grid-template-columns:1fr}}
+.curr-phases{display:flex;flex-direction:column;gap:3px}
+.phase{border:1px solid var(–border);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.phase:hover{border-color:var(–border2)}
+.phase.open{border-color:rgba(37,99,235,.3)}
+.phase-head{display:flex;align-items:center;gap:16px;padding:18px 22px;cursor:pointer;background:var(–card);transition:background .2s;user-select:none}
+.phase-head:hover{background:var(–card2)}
+.phase-count{font-family:‘JetBrains Mono’,monospace;font-size:.68rem;color:var(–text3);letter-spacing:.06em;min-width:28px}
+.phase-name{font-size:.9rem;font-weight:700;flex:1;letter-spacing:-.01em}
+.phase-week{font-size:.7rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace;margin-right:8px}
+.phase-chevron{color:var(–text3);font-size:.75rem;transition:transform .3s}
+.phase.open .phase-chevron{transform:rotate(180deg);color:var(–blue2)}
+.phase-body{display:none;background:var(–navy3);padding:4px 0 8px}
+.phase.open .phase-body{display:block}
+.phase-lesson{display:flex;align-items:center;gap:14px;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.04)}
+.phase-lesson:last-child{border:none}
+.phase-lesson-icon{font-size:.85rem;width:28px;text-align:center;flex-shrink:0}
+.phase-lesson-name{font-size:.82rem;color:var(–text2);flex:1;line-height:1.4}
+.phase-lesson-tag{font-family:‘JetBrains Mono’,monospace;font-size:.6rem;padding:2px 8px;border-radius:4px;flex-shrink:0}
+.lt-video{background:rgba(37,99,235,.1);color:var(–blue2);border:1px solid rgba(37,99,235,.2)}
+.lt-project{background:rgba(245,158,11,.1);color:var(–gold2);border:1px solid rgba(245,158,11,.2)}
+.lt-quiz{background:rgba(124,58,237,.1);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
+.lt-live{background:rgba(16,185,129,.1);color:var(–green2);border:1px solid rgba(16,185,129,.2)}
+
+/* CURRICULUM SIDEBAR */
+.curr-aside{position:sticky;top:84px}
+.cert-card{background:var(–card);border:1px solid var(–border);border-radius:var(–radius-lg);padding:28px;margin-bottom:20px}
+.cert-visual{width:100%;height:140px;background:linear-gradient(135deg,rgba(37,99,235,.15),rgba(6,182,212,.1));border-radius:10px;border:1px solid rgba(37,99,235,.2);display:flex;align-items:center;justify-content:center;margin-bottom:20px;position:relative;overflow:hidden}
+.cert-visual::before{content:’’;position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(37,99,235,.08))}
+.cert-seal{font-size:3rem;position:relative;z-index:1}
+.cert-title{font-size:.95rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em}
+.cert-desc{font-size:.8rem;color:var(–text2);line-height:1.6;margin-bottom:16px}
+.cert-features{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.cert-feat{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(–text2)}
+.cert-feat-icon{color:var(–green2);font-size:.75rem}
+.btn-full{width:100%;padding:13px;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;border:none;font-family:‘Plus Jakarta Sans’,sans-serif;transition:all .2s}
+.btn-full-primary{background:var(–blue);color:#fff}
+.btn-full-primary:hover{background:var(–blue2);box-shadow:0 4px 16px rgba(37,99,235,.4)}
+.btn-full-outline{background:transparent;color:var(–text);border:1px solid var(–border2)!important;margin-top:8px}
+.btn-full-outline:hover{background:rgba(255,255,255,.06)}
+.what-you-learn{background:var(–card);border:1px solid var(–border);border-radius:var(–radius-lg);padding:24px}
+.wyl-title{font-size:.85rem;font-weight:700;margin-bottom:16px}
+.wyl-list{display:flex;flex-direction:column;gap:10px}
+.wyl-item{display:flex;align-items:flex-start;gap:10px;font-size:.8rem;color:var(–text2);line-height:1.5}
+.wyl-check{color:var(–blue2);font-size:.75rem;margin-top:2px;flex-shrink:0}
+
+/* ══════════════════════════════════
+STATS / FEATURES
+══════════════════════════════════ */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:900px){.features-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.features-grid{grid-template-columns:1fr}}
+.feature-card{background:var(–card);border:1px solid var(–border);border-radius:var(–radius-lg);padding:28px;transition:all .3s}
+.feature-card:hover{border-color:var(–border2);transform:translateY(-3px);box-shadow:var(–shadow)}
+.feature-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:18px}
+.feature-title{font-size:.95rem;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+.feature-desc{font-size:.83rem;color:var(–text2);line-height:1.65}
+
+/* ══════════════════════════════════
+PRICING
+══════════════════════════════════ */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start}
+@media(max-width:900px){.pricing-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto}}
+.price-card{background:var(–card);border:1px solid var(–border);border-radius:var(–radius-lg);padding:32px;position:relative;transition:all .3s}
+.price-card:hover{transform:translateY(-4px)}
+.price-card.featured{border-color:rgba(37,99,235,.4);box-shadow:0 0 0 1px rgba(37,99,235,.2),0 20px 50px rgba(37,99,235,.15)}
+.price-card.featured .btn-full-primary{animation:glow 3s ease infinite}
+.price-popular{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(–blue),var(–cyan));color:#fff;font-size:.65rem;font-weight:700;padding:4px 14px;border-radius:100px;white-space:nowrap;font-family:‘JetBrains Mono’,monospace;letter-spacing:.06em;text-transform:uppercase}
+.price-plan{font-size:.72rem;font-weight:700;color:var(–text3);letter-spacing:.1em;text-transform:uppercase;font-family:‘JetBrains Mono’,monospace;margin-bottom:14px}
+.price-amount{font-size:3rem;font-weight:800;letter-spacing:-.05em;line-height:1;margin-bottom:4px}
+.price-amount .currency{font-size:1.4rem;font-weight:600;vertical-align:.3em}
+.price-amount .period{font-size:.9rem;font-weight:400;color:var(–text3);letter-spacing:0}
+.price-desc{font-size:.8rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace;margin-bottom:28px}
+.price-divider{height:1px;background:var(–border);margin-bottom:22px}
+.price-features{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+.price-feature{display:flex;align-items:flex-start;gap:10px;font-size:.83rem;color:var(–text2);line-height:1.4}
+.pf-check{color:var(–green2);font-size:.75rem;margin-top:2px;flex-shrink:0}
+.pf-x{color:var(–text3);font-size:.75rem;margin-top:2px;flex-shrink:0}
+.pf-x~span{color:var(–text3)}
+
+/* ══════════════════════════════════
+TESTIMONIALS
+══════════════════════════════════ */
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:900px){.testimonials-grid{grid-template-columns:1fr}}
+.t-card{background:var(–card);border:1px solid var(–border);border-radius:var(–radius-lg);padding:28px;transition:all .3s}
+.t-card:hover{border-color:var(–border2);transform:translateY(-3px)}
+.t-stars{color:var(–gold);font-size:.8rem;letter-spacing:2px;margin-bottom:16px}
+.t-quote{font-size:.88rem;color:var(–text2);line-height:1.75;margin-bottom:20px;font-family:‘Fraunces’,serif;font-style:italic;font-weight:300}
+.t-author{display:flex;align-items:center;gap:12px}
+.t-pic{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(–blue),var(–cyan));display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.t-name{font-size:.85rem;font-weight:700;letter-spacing:-.01em}
+.t-role{font-size:.72rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace;margin-top:1px}
+
+/* ══════════════════════════════════
+CTA BAND
+══════════════════════════════════ */
+.cta-band{background:linear-gradient(135deg,rgba(37,99,235,.15),rgba(6,182,212,.08));border-top:1px solid rgba(37,99,235,.2);border-bottom:1px solid rgba(37,99,235,.2);padding:100px 0;text-align:center;position:relative;overflow:hidden}
+.cta-band::before{content:’’;position:absolute;width:800px;height:500px;background:radial-gradient(ellipse,rgba(37,99,235,.15) 0%,transparent 70%);left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+.cta-band h2{font-size:clamp(2rem,4vw,3.2rem);font-weight:800;letter-spacing:-.04em;margin-bottom:16px;position:relative;z-index:1}
+.cta-band p{font-size:1.05rem;color:var(–text2);margin-bottom:36px;position:relative;z-index:1;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.7}
+.cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+
+/* ══════════════════════════════════
+FOOTER
+══════════════════════════════════ */
+.footer{background:var(–navy2);border-top:1px solid var(–border);padding:72px 0 36px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:60px}
+@media(max-width:800px){.footer-grid{grid-template-columns:1fr 1fr}}
+.footer-brand-desc{font-size:.83rem;color:var(–text3);line-height:1.7;margin:16px 0 24px;max-width:280px}
+.footer-socials{display:flex;gap:8px}
+.soc-btn{width:36px;height:36px;border:1px solid var(–border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82rem;cursor:pointer;background:transparent;color:var(–text3);transition:all .2s}
+.soc-btn:hover{border-color:var(–blue2);color:var(–blue2);background:rgba(37,99,235,.08)}
+.footer-col-title{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(–text);margin-bottom:18px;font-family:‘JetBrains Mono’,monospace}
+.footer-links{display:flex;flex-direction:column;gap:10px}
+.footer-links a{font-size:.83rem;color:var(–text3);text-decoration:none;transition:color .2s;cursor:pointer}
+.footer-links a:hover{color:var(–text)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:32px;border-top:1px solid var(–border);flex-wrap:wrap;gap:12px}
+.footer-copy{font-size:.75rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace}
+.footer-legal{display:flex;gap:20px}
+.footer-legal a{font-size:.75rem;color:var(–text3);text-decoration:none;transition:color .2s;cursor:pointer}
+.footer-legal a:hover{color:var(–text)}
+
+/* ══════════════════════════════════
+PAYMENT MODAL
+══════════════════════════════════ */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-backdrop.open{display:flex;animation:fadeIn .25s ease}
+.modal-box{background:var(–navy2);border:1px solid var(–border2);border-radius:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp .35s cubic-bezier(.34,1.56,.64,1);scrollbar-width:thin;scrollbar-color:var(–card2) transparent}
+.modal-close-btn{position:absolute;top:18px;right:18px;width:32px;height:32px;background:var(–card2);border:1px solid var(–border);border-radius:50%;cursor:pointer;color:var(–text3);font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:10}
+.modal-close-btn:hover{color:var(–text);border-color:var(–border2)}
+.modal-top{padding:36px 36px 0}
+.modal-plan-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.25);border-radius:100px;font-size:.65rem;font-family:‘JetBrains Mono’,monospace;color:var(–blue2);letter-spacing:.06em;margin-bottom:14px;text-transform:uppercase}
+.modal-h{font-size:1.7rem;font-weight:800;letter-spacing:-.04em;margin-bottom:6px;line-height:1.1}
+.modal-h .accent{background:linear-gradient(135deg,var(–blue2),var(–cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.modal-sub-text{font-size:.85rem;color:var(–text2);line-height:1.6;margin-bottom:24px}
+.modal-price-row{background:var(–card);border:1px solid var(–border);border-radius:14px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-price-big{font-size:2.6rem;font-weight:800;letter-spacing:-.05em;line-height:1}
+.modal-price-big sup{font-size:1.1rem;font-weight:600;vertical-align:.4em}
+.modal-price-period{font-size:.75rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace;margin-top:3px}
+.modal-price-chip{padding:5px 12px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);border-radius:8px;font-size:.72rem;font-weight:700;color:var(–green2);font-family:‘JetBrains Mono’,monospace}
+.modal-feats{display:flex;flex-direction:column;gap:10px;padding:0 36px 20px}
+.modal-feat{display:flex;align-items:center;gap:10px;font-size:.83rem;color:var(–text2)}
+.modal-feat .c{color:var(–green2);font-size:.75rem;flex-shrink:0}
+.modal-pay-section{padding:0 36px 36px}
+.mpay-label{font-size:.68rem;font-family:‘JetBrains Mono’,monospace;color:var(–text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+.stripe-pay-btn{width:100%;padding:14px;background:#635bff;color:#fff;border:none;border-radius:12px;font-family:‘Plus Jakarta Sans’,sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px}
+.stripe-pay-btn:hover{background:#4f46e5;transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,91,255,.4)}
+.modal-divider{display:flex;align-items:center;gap:12px;margin:16px 0}
+.modal-divider-line{flex:1;height:1px;background:var(–border)}
+.modal-divider-text{font-size:.65rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace;letter-spacing:.06em}
+.field-group{margin-bottom:14px}
+.field-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.m-input{width:100%;padding:12px 15px;background:var(–card);border:1px solid var(–border2);border-radius:10px;color:var(–text);font-family:‘Plus Jakarta Sans’,sans-serif;font-size:.85rem;outline:none;transition:all .2s}
+.m-input:focus{border-color:var(–blue2);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.m-input::placeholder{color:var(–text3)}
+.card-wrapper{padding:12px 15px;background:var(–card);border:1px solid var(–border2);border-radius:10px;transition:all .2s}
+.card-wrapper.focused{border-color:var(–blue2);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.pay-main-btn{width:100%;padding:14px;background:var(–blue);color:#fff;border:none;border-radius:12px;font-family:‘Plus Jakarta Sans’,sans-serif;font-weight:800;font-size:.95rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px;letter-spacing:-.01em}
+.pay-main-btn:hover:not(:disabled){background:var(–blue2);box-shadow:0 8px 28px rgba(37,99,235,.45);transform:translateY(-1px)}
+.pay-main-btn:disabled{opacity:.55;cursor:not-allowed}
+.pay-spinner-el{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.pay-secure-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;font-size:.7rem;color:var(–text3);font-family:‘JetBrains Mono’,monospace}
+.pay-error-box{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px 14px;font-size:.78rem;color:#fca5a5;margin-top:12px;display:none}
+.modal-success{padding:52px 36px;text-align:center;display:none}
+.success-anim{font-size:4rem;margin-bottom:16px;animation:pop 0.5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.success-h{font-size:1.6rem;font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
+.success-p{font-size:.88rem;color:var(–text2);line-height:1.7;margin-bottom:28px}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(–card2);border:1px solid var(–border2);border-radius:12px;padding:14px 20px;font-size:.82rem;color:var(–text);z-index:999;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);max-width:320px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-icon{font-size:1rem;flex-shrink:0}
+</style>
+
+</head>
+<body>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"><span class="toast-icon" id="toastIcon">✓</span><span id="toastMsg"></span></div>
+
+<!-- ══════════════════════════════════
+     PAYMENT MODAL
+══════════════════════════════════ -->
+
+<div class="modal-backdrop" id="payModal">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal()">✕</button>
+
+```
+<!-- FORM STATE -->
+<div id="modalForm">
+  <div class="modal-top">
+    <div class="modal-plan-badge">⬡ MindGrid AI · Builder Plan</div>
+    <h2 class="modal-h">Unlock <span class="accent">Full Access</span></h2>
+    <p class="modal-sub-text">Every track. Every lesson. The AI tutor available 24/7. For less than a coffee.</p>
+    <div class="modal-price-row">
+      <div>
+        <div class="modal-price-big"><sup>$</sup>7</div>
+        <div class="modal-price-period">per month · cancel anytime</div>
+      </div>
+      <div class="modal-price-chip">✓ Best value</div>
+    </div>
+  </div>
+  <div class="modal-feats">
+    <div class="modal-feat"><span class="c">✓</span> All 6 tracks — 47 AI-taught modules</div>
+    <div class="modal-feat"><span class="c">✓</span> Embedded video lessons — no YouTube redirect</div>
+    <div class="modal-feat"><span class="c">✓</span> Sage AI Tutor — unlimited questions, 24/7</div>
+    <div class="modal-feat"><span class="c">✓</span> 12 real-world guided projects</div>
+    <div class="modal-feat"><span class="c">✓</span> Shareable MindGrid AI Certificate</div>
+    <div class="modal-feat"><span class="c">✓</span> Cancel anytime — no contracts</div>
+  </div>
+  <div class="modal-pay-section">
+    <button class="stripe-pay-btn" onclick="goStripe()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg>
+      Pay with Stripe — $7/month
+    </button>
+    <div class="modal-divider">
+      <div class="modal-divider-line"></div>
+      <div class="modal-divider-text">OR ENTER CARD DETAILS</div>
+      <div class="modal-divider-line"></div>
+    </div>
+    <div class="field-group">
+      <div class="mpay-label">Email address</div>
+      <input type="email" class="m-input" id="payEmail" placeholder="you@example.com">
+    </div>
+    <div class="field-group field-row-2">
+      <div><div class="mpay-label">First name</div><input type="text" class="m-input" id="payFirst" placeholder="John"></div>
+      <div><div class="mpay-label">Last name</div><input type="text" class="m-input" id="payLast" placeholder="Doe"></div>
+    </div>
+    <div class="field-group">
+      <div class="mpay-label">Card details</div>
+      <div class="card-wrapper" id="cardWrap"><div id="card-el"></div></div>
+    </div>
+    <div class="pay-error-box" id="payErr"></div>
+    <button class="pay-main-btn" id="payBtn" onclick="doPayment()">
+      <span id="payBtnLabel">🔒 Subscribe for $7/month</span>
+      <div class="pay-spinner-el" id="paySpinner"></div>
+    </button>
+    <div class="pay-secure-row">🔒 Secured by Stripe · 256-bit SSL encryption · Cancel anytime</div>
+  </div>
+</div>
+
+<!-- SUCCESS STATE -->
+<div class="modal-success" id="modalSuccess">
+  <div class="success-anim">🎉</div>
+  <div class="success-h">You're in, Builder!</div>
+  <p class="success-p">Your subscription is live. All 47 modules, Sage the AI tutor, and every project are now yours. Time to build something amazing.</p>
+  <button class="btn-full btn-full-primary" onclick="grantAccess()">✦ Start Learning Now</button>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     NAV
+══════════════════════════════════ -->
+
+<nav class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <div class="nav-logo" onclick="scrollTop()">
+        <div class="nav-logo-mark">M</div>
+        <div class="nav-logo-text">MindGrid <span>AI</span></div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#courses">Courses</a></li>
+        <li><a href="#learn">Learn</a></li>
+        <li><a href="#curriculum">Curriculum</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-nav-ghost" onclick="toast('👋 Sign in coming soon — set up your backend first!','💡')">Sign In</button>
+        <button class="btn-nav-primary" onclick="openModal()">Start Free</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════════
+     HERO
+══════════════════════════════════ -->
+
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        <span id="heroTag">AI-powered learning — no instructor required</span>
+      </div>
+      <h1 class="hero-h1">
+        Learn AI.<br>
+        <span class="serif-line">Build the future.</span>
+      </h1>
+      <p class="hero-desc">The platform that teaches itself. AI-curated video lessons, an AI tutor available 24/7, and real projects — from zero to advanced in 12 weeks.</p>
+      <div class="hero-actions">
+        <button class="btn-primary-lg" onclick="openModal()">
+          <span>Start for Free</span>
+          <span>→</span>
+        </button>
+        <a href="#learn" class="btn-ghost-lg">
+          <span>▶</span>
+          <span>Watch a Lesson</span>
+        </a>
+      </div>
+    </div>
+    <div class="hero-stats-strip">
+      <div class="h-stat"><div class="h-stat-num gradient-text" data-count="47">0</div><div class="h-stat-label">AI-Taught Modules</div></div>
+      <div class="h-stat"><div class="h-stat-num gradient-text" data-count="12">0</div><div class="h-stat-label">Real Projects</div></div>
+      <div class="h-stat"><div class="h-stat-num gradient-text" data-count="2400" data-suffix="+">0</div><div class="h-stat-label">Active Learners</div></div>
+      <div class="h-stat"><div class="h-stat-num gold-text" data-prefix="$" data-count="7">/mo</div><div class="h-stat-label">Full Access</div></div>
+      <div class="h-stat"><div class="h-stat-num gradient-text" data-count="96" data-suffix="%">0</div><div class="h-stat-label">Completion Rate</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <div class="marquee-item"><div class="marquee-dot"></div>Prompt Engineering</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>AI Automation</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Image Generation</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>AI App Building</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Business AI</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Video Creation</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Sage AI Tutor 24/7</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>No YouTube Required</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Earn Certificate</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Prompt Engineering</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>AI Automation</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Image Generation</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>AI App Building</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Business AI</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Video Creation</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Sage AI Tutor 24/7</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>No YouTube Required</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Earn Certificate</div>
+  </div>
+</div>
+
+<!-- TRUST BAR -->
+
+<div class="trust-bar">
+  <div class="container">
+    <div class="trust-label">TRUSTED BY LEARNERS FROM COMPANIES INCLUDING</div>
+    <div class="trust-logos">
+      <div class="trust-logo">Google</div>
+      <div class="trust-logo">Microsoft</div>
+      <div class="trust-logo">Meta</div>
+      <div class="trust-logo">Shopify</div>
+      <div class="trust-logo">Deloitte</div>
+      <div class="trust-logo">Accenture</div>
+      <div class="trust-logo">McKinsey</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     COURSES / TRACKS
+══════════════════════════════════ -->
+
+<section class="section" id="courses">
+  <div class="container">
+    <div class="s-header center reveal">
+      <div class="s-tag">// Learning Tracks</div>
+      <h2 class="s-title">Six tracks. AI teaches all of them.</h2>
+      <p class="s-desc" style="margin:0 auto">Every module is delivered through curated video lessons and explained by Sage, your AI tutor. You never leave the platform.</p>
+    </div>
+    <div class="tracks-grid">
+
+```
+  <!-- FREE -->
+  <div class="course-card reveal" onclick="loadLesson(0); document.getElementById('learn').scrollIntoView({behavior:'smooth'})">
+    <div class="course-thumb" style="background:linear-gradient(135deg,#0d1f3c,#0a2040)">
+      <div class="course-badge-wrap"><span class="badge badge-free">Free</span></div>
+      <div class="course-thumb-emoji">🧠</div>
+    </div>
+    <div class="course-body">
+      <div class="course-track" style="color:var(--blue2)">Prompt Engineering</div>
+      <div class="course-title">Master the Language of AI</div>
+      <div class="course-desc">Zero-shot, few-shot, chain-of-thought, role prompting — the core skill every AI builder needs.</div>
+      <div class="course-meta">
+        <div class="course-meta-item">📹 8 lessons</div>
+        <div class="course-meta-item">⏱ 2.5 hrs</div>
+        <div class="course-rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="course-card reveal reveal-delay-1" onclick="loadLesson(1); document.getElementById('learn').scrollIntoView({behavior:'smooth'})">
+    <div class="course-thumb" style="background:linear-gradient(135deg,#0a2a1a,#0a1f0f)">
+      <div class="course-badge-wrap"><span class="badge badge-free">Free</span></div>
+      <div class="course-thumb-emoji">🤖</div>
+    </div>
+    <div class="course-body">
+      <div class="course-track" style="color:var(--green2)">AI Foundations</div>
+      <div class="course-title">How AI Actually Works</div>
+      <div class="course-desc">Models, training, embeddings, and APIs — demystified for anyone, no coding background required.</div>
+      <div class="course-meta">
+        <div class="course-meta-item">📹 6 lessons</div>
+        <div class="course-meta-item">⏱ 1.8 hrs</div>
+        <div class="course-rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRO -->
+  <div class="course-card reveal reveal-delay-2">
+    <div class="course-thumb" style="background:linear-gradient(135deg,#1a1a0a,#2a1a0a)">
+      <div class="course-badge-wrap"><span class="badge badge-pro">Pro</span></div>
+      <div class="course-thumb-emoji" style="animation-delay:.5s">⚡</div>
+      <div class="course-pro-lock">
+        <div class="lock-label">🔒 Pro only — $7/month</div>
+        <button class="lock-cta" onclick="openModal()">Unlock All Tracks</button>
+      </div>
+    </div>
+    <div class="course-body">
+      <div class="course-track" style="color:var(--gold2)">AI Automation</div>
+      <div class="course-title">Build Workflows That Run Themselves</div>
+      <div class="course-desc">Make, Zapier, n8n — automate emails, social media, lead gen, and more without a developer.</div>
+      <div class="course-meta">
+        <div class="course-meta-item">📹 10 lessons</div>
+        <div class="course-meta-item">⏱ 3.2 hrs</div>
+        <div class="course-rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="course-card reveal">
+    <div class="course-thumb" style="background:linear-gradient(135deg,#1a0a2a,#0f0a20)">
+      <div class="course-badge-wrap"><span class="badge badge-pro">Pro</span></div>
+      <div class="course-thumb-emoji" style="animation-delay:1s">🎨</div>
+      <div class="course-pro-lock">
+        <div class="lock-label">🔒 Pro only — $7/month</div>
+        <button class="lock-cta" onclick="openModal()">Unlock All Tracks</button>
+      </div>
+    </div>
+    <div class="course-body">
+      <div class="course-track" style="color:#a78bfa">Creative AI</div>
+      <div class="course-title">Generate Images, Video & Audio</div>
+      <div class="course-desc">Midjourney, DALL-E, Sora, ElevenLabs — produce professional creative content with AI.</div>
+      <div class="course-meta">
+        <div class="course-meta-item">📹 9 lessons</div>
+        <div class="course-meta-item">⏱ 2.8 hrs</div>
+        <div class="course-rating"><span class="stars">★★★★★</span><span class="rating-num">4.7</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="course-card reveal reveal-delay-1">
+    <div class="course-thumb" style="background:linear-gradient(135deg,#0a1f2a,#0a1520)">
+      <div class="course-badge-wrap"><span class="badge badge-pro">Pro</span></div>
+      <div class="course-thumb-emoji" style="animation-delay:1.5s">🛠️</div>
+      <div class="course-pro-lock">
+        <div class="lock-label">🔒 Pro only — $7/month</div>
+        <button class="lock-cta" onclick="openModal()">Unlock All Tracks</button>
+      </div>
+    </div>
+    <div class="course-body">
+      <div class="course-track" style="color:var(--cyan2)">AI App Builder</div>
+      <div class="course-title">Ship Real Apps Without a Developer</div>
+      <div class="course-desc">Cursor, Bolt, Replit — build and deploy full web applications using AI as your co-pilot.</div>
+      <div class="course-meta">
+        <div class="course-meta-item">📹 11 lessons</div>
+        <div class="course-meta-item">⏱ 3.8 hrs</div>
+        <div class="course-rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="course-card reveal reveal-delay-2">
+    <div class="course-thumb" style="background:linear-gradient(135deg,#1f0a0a,#200d0a)">
+      <div class="course-badge-wrap"><span class="badge badge-pro">Pro</span></div>
+      <div class="course-thumb-emoji" style="animation-delay:2s">💼</div>
+      <div class="course-pro-lock">
+        <div class="lock-label">🔒 Pro only — $7/month</div>
+        <button class="lock-cta" onclick="openModal()">Unlock All Tracks</button>
+      </div>
+    </div>
+    <div class="course-body">
+      <div class="course-track" style="color:#fb7185">Business AI</div>
+      <div class="course-title">AI Strategy for Business Owners</div>
+      <div class="course-desc">Integrate AI into sales, marketing, and ops. Gain real competitive advantage with practical strategy.</div>
+      <div class="course-meta">
+        <div class="course-meta-item">📹 7 lessons</div>
+        <div class="course-meta-item">⏱ 2.2 hrs</div>
+        <div class="course-rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     WHY MINDGRID
+══════════════════════════════════ -->
+
+<section class="section-sm" style="background:var(--navy2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="s-header center reveal">
+      <div class="s-tag">// Why MindGrid AI</div>
+      <h2 class="s-title">The platform runs itself.<br>You just learn.</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.2)">🎬</div>
+        <div class="feature-title">Lessons Embedded — No YouTube</div>
+        <div class="feature-desc">Every video lesson is embedded directly in the platform. No redirects, no ads, no algorithm dragging you off-track.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2)">🤖</div>
+        <div class="feature-title">Sage AI Tutor — Always On</div>
+        <div class="feature-desc">Ask Sage anything about any lesson at any time. Powered by Claude AI, it explains concepts instantly in your own words.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)">🚀</div>
+        <div class="feature-title">Real Projects You Can Show</div>
+        <div class="feature-desc">Every track ends with a real deliverable — a chatbot, an automation pipeline, a launched app. Not just theory.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     LEARNING ROOM
+══════════════════════════════════ -->
+
+<section class="learn-room" id="learn">
+  <div class="container">
+    <div class="s-header reveal">
+      <div class="s-tag">// Learning Room</div>
+      <h2 class="s-title">Watch. Ask. Build.</h2>
+      <p class="s-desc">Lessons play right here. Sage explains anything you don't understand. No other platform required.</p>
+    </div>
+
+```
+<div class="learn-layout">
+
+  <!-- LEFT: PLAYER + NOTES -->
+  <div>
+    <div class="player-shell reveal">
+      <div class="player-header">
+        <div class="player-dots"><div class="player-dot"></div><div class="player-dot"></div><div class="player-dot"></div></div>
+        <div class="player-url" id="playerUrl">mindgrid.ai/learn/prompt-engineering/lesson-1</div>
+        <div class="player-secure">🔒 Secure</div>
+      </div>
+      <div class="video-wrap">
+        <div class="vid-loading" id="vidLoad">
+          <div class="vid-spinner"></div>
+          <div class="vid-spinner-label">Loading lesson...</div>
+        </div>
+        <div class="vid-overlay-top"></div>
+        <div class="vid-overlay-bot"></div>
+        <iframe id="vidFrame"
+          src="https://www.youtube.com/embed/1bUy-1hGZpI?rel=0&modestbranding=1&showinfo=0&color=white&iv_load_policy=3&fs=1"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          onload="document.getElementById('vidLoad').classList.add('gone')">
+        </iframe>
+      </div>
+      <div class="player-info">
+        <div class="player-info-row">
+          <div>
+            <div class="player-lesson-title" id="vidTitle">What is Prompt Engineering?</div>
+            <div class="player-lesson-meta">
+              <div class="player-meta-chip">🧠 Prompt Engineering</div>
+              <div class="player-meta-chip">📹 Lesson 1 of 8</div>
+              <div class="player-meta-chip" id="vidDur">⏱ 12 min</div>
+              <div class="player-meta-chip" id="vidAccess" style="color:var(--green2)">✓ Free</div>
+            </div>
+          </div>
+          <div class="player-actions">
+            <button class="player-btn player-btn-ghost" onclick="toast('📌 Bookmarked!','🔖')">Save</button>
+            <button class="player-btn player-btn-primary" onclick="nextLesson()">Next →</button>
+          </div>
+        </div>
+      </div>
+      <div class="ai-notes">
+        <div class="ai-notes-header">
+          <div class="ai-notes-icon">✦</div>
+          <div class="ai-notes-title">AI Lesson Summary</div>
+          <div class="ai-notes-badge">Auto-generated by Sage</div>
+        </div>
+        <div class="ai-notes-body" id="lessonNotes">
+          <div class="notes-point"><div class="notes-bullet" style="background:rgba(37,99,235,.15);color:var(--blue2)">🎯</div><div><strong>What it is:</strong> Prompt engineering is the skill of writing precise, structured instructions for AI models to get consistently excellent output.</div></div>
+          <div class="notes-point"><div class="notes-bullet" style="background:rgba(6,182,212,.12);color:var(--cyan2)">🧩</div><div><strong>Core formula:</strong> Role + Context + Task = Great Prompt. Always tell the AI who to be, what the situation is, and exactly what you need.</div></div>
+          <div class="notes-point"><div class="notes-bullet" style="background:rgba(16,185,129,.12);color:var(--green2)">⚡</div><div><strong>Why it matters:</strong> The same AI model gives radically different results depending on how you write your prompt. This skill multiplies the value of every AI tool you use.</div></div>
+          <div class="notes-point"><div class="notes-bullet" style="background:rgba(245,158,11,.12);color:var(--gold2)">📌</div><div><strong>Try now:</strong> Open any AI tool and add "You are an expert [role]" before your next request. Compare the output quality.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: PLAYLIST + TUTOR -->
+  <div class="learn-sidebar">
+
+    <!-- PLAYLIST -->
+    <div class="playlist reveal">
+      <div class="playlist-header">
+        <div class="playlist-title">Prompt Engineering Track</div>
+        <div class="playlist-progress">2 / 8 complete</div>
+      </div>
+      <div class="playlist-progress-bar"><div class="playlist-progress-fill"></div></div>
+      <div class="playlist-list">
+        <div class="playlist-item active" onclick="loadLesson(0)">
+          <div class="pl-num">1</div>
+          <div class="pl-thumb">🧠</div>
+          <div class="pl-info"><div class="pl-name">What is Prompt Engineering?</div><div class="pl-meta">12 min · Free</div></div>
+          <div class="pl-status">▶</div>
+        </div>
+        <div class="playlist-item" onclick="loadLesson(1)" style="opacity:.8">
+          <div class="pl-num">2</div>
+          <div class="pl-thumb">🎯</div>
+          <div class="pl-info"><div class="pl-name">Zero-shot vs Few-shot</div><div class="pl-meta">15 min · Free</div></div>
+          <div class="pl-status">✅</div>
+        </div>
+        <div class="playlist-item" onclick="gatedLesson()">
+          <div class="pl-num">3</div>
+          <div class="pl-thumb">🎭</div>
+          <div class="pl-info"><div class="pl-name">Role Prompting Mastery</div><div class="pl-meta">18 min · Pro</div></div>
+          <div class="pl-lock">🔒</div>
+        </div>
+        <div class="playlist-item" onclick="gatedLesson()">
+          <div class="pl-num">4</div>
+          <div class="pl-thumb">🔗</div>
+          <div class="pl-info"><div class="pl-name">Chain-of-Thought Technique</div><div class="pl-meta">20 min · Pro</div></div>
+          <div class="pl-lock">🔒</div>
+        </div>
+        <div class="playlist-item" onclick="gatedLesson()">
+          <div class="pl-num">5</div>
+          <div class="pl-thumb">📋</div>
+          <div class="pl-info"><div class="pl-name">Structured Output Prompting</div><div class="pl-meta">16 min · Pro</div></div>
+          <div class="pl-lock">🔒</div>
+        </div>
+        <div class="playlist-item" onclick="gatedLesson()">
+          <div class="pl-num">6</div>
+          <div class="pl-thumb">⚗️</div>
+          <div class="pl-info"><div class="pl-name">Advanced Meta-Prompting</div><div class="pl-meta">22 min · Pro</div></div>
+          <div class="pl-lock">🔒</div>
+        </div>
+        <div class="playlist-item" onclick="gatedLesson()">
+          <div class="pl-num">7</div>
+          <div class="pl-thumb">📚</div>
+          <div class="pl-info"><div class="pl-name">Build Your Prompt Library</div><div class="pl-meta">25 min · Pro</div></div>
+          <div class="pl-lock">🔒</div>
+        </div>
+        <div class="playlist-item" onclick="gatedLesson()">
+          <div class="pl-num">8</div>
+          <div class="pl-thumb">🏆</div>
+          <div class="pl-info"><div class="pl-name">Final Project: Prompt System</div><div class="pl-meta">30 min · Pro</div></div>
+          <div class="pl-lock">🔒</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI TUTOR -->
+    <div class="tutor-shell reveal reveal-delay-1">
+      <div class="tutor-header">
+        <div class="tutor-avatar">✦</div>
+        <div>
+          <div class="tutor-name">Sage — AI Tutor</div>
+          <div class="tutor-status">Online</div>
+        </div>
+        <div class="tutor-powered">Claude AI</div>
+      </div>
+      <div class="tutor-messages" id="tutorMsgs">
+        <div class="t-msg t-msg-ai">
+          <div class="t-msg-label">Sage</div>
+          <div class="t-bubble">Hi! I'm Sage, your AI tutor. I've analyzed this lesson on <strong>Prompt Engineering</strong>. Ask me anything — I'll explain it in a way that makes sense for you. 🧠</div>
+        </div>
+        <div class="t-msg t-msg-ai">
+          <div class="t-bubble">Try a quick question below, or type your own!</div>
+        </div>
+      </div>
+      <div class="tutor-suggestions" id="tutorSuggestions">
+        <div class="t-suggestion" onclick="quickAsk('Explain prompt engineering in simple terms')">Explain simply</div>
+        <div class="t-suggestion" onclick="quickAsk('Show me a real business example')">Real example</div>
+        <div class="t-suggestion" onclick="quickAsk('What should I practice first after this lesson?')">What to practice</div>
+        <div class="t-suggestion" onclick="quickAsk('How does this compare to regular Google searches?')">vs. Google</div>
+      </div>
+      <div class="tutor-input-wrap">
+        <textarea class="tutor-input" id="tutorInput" rows="1" placeholder="Ask Sage anything about this lesson..." onkeydown="handleKey(event)"></textarea>
+        <button class="tutor-send" id="tutorSend" onclick="askSage()">➤</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     CURRICULUM
+══════════════════════════════════ -->
+
+<section class="section" id="curriculum">
+  <div class="container">
+    <div class="curriculum-layout">
+
+```
+  <!-- LEFT: PHASES -->
+  <div>
+    <div class="s-header reveal">
+      <div class="s-tag">// Full Curriculum</div>
+      <h2 class="s-title">12 weeks. AI-taught.<br>Self-paced.</h2>
+      <p class="s-desc">Every module includes a video lesson, AI-generated notes, a Sage tutoring session, and a practical exercise.</p>
+    </div>
+
+    <div class="curr-phases reveal">
+      <div class="phase open">
+        <div class="phase-head" onclick="togglePhase(this)">
+          <div class="phase-count">01</div>
+          <div class="phase-name">AI Orientation & Foundations</div>
+          <div class="phase-week">Weeks 1–2</div>
+          <div class="phase-chevron">▾</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-lesson"><div class="phase-lesson-icon">📖</div><div class="phase-lesson-name">What is AI? How do large language models work?</div><div class="phase-lesson-tag lt-video">Video</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🗺️</div><div class="phase-lesson-name">The AI landscape: ChatGPT, Claude, Gemini & tools</div><div class="phase-lesson-tag lt-video">Video</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">💬</div><div class="phase-lesson-name">Your first 10 AI conversations — guided by Sage</div><div class="phase-lesson-tag lt-live">AI Workshop</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🏆</div><div class="phase-lesson-name">Orientation quiz — Sage tests your knowledge</div><div class="phase-lesson-tag lt-quiz">AI Quiz</div></div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-head" onclick="togglePhase(this)">
+          <div class="phase-count">02</div><div class="phase-name">Prompt Engineering Mastery</div><div class="phase-week">Weeks 3–4</div><div class="phase-chevron">▾</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-lesson"><div class="phase-lesson-icon">🎯</div><div class="phase-lesson-name">Zero-shot, few-shot, chain-of-thought prompting</div><div class="phase-lesson-tag lt-video">Video</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🎭</div><div class="phase-lesson-name">Role prompting & persona design</div><div class="phase-lesson-tag lt-video">Video</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">📋</div><div class="phase-lesson-name">Structured output prompting (JSON, tables, code)</div><div class="phase-lesson-tag lt-live">AI Workshop</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">⚗️</div><div class="phase-lesson-name">Project: Build a reusable Prompt Library</div><div class="phase-lesson-tag lt-project">Project</div></div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-head" onclick="togglePhase(this)">
+          <div class="phase-count">03</div><div class="phase-name">AI Automation & Workflow Design</div><div class="phase-week">Weeks 5–6</div><div class="phase-chevron">▾</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-lesson"><div class="phase-lesson-icon">🔗</div><div class="phase-lesson-name">Introduction to Make, Zapier, n8n platforms</div><div class="phase-lesson-tag lt-video">Video</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">📧</div><div class="phase-lesson-name">Project: AI email auto-responder system</div><div class="phase-lesson-tag lt-project">Project</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">📱</div><div class="phase-lesson-name">Project: Social media AI publishing pipeline</div><div class="phase-lesson-tag lt-project">Project</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🏪</div><div class="phase-lesson-name">Capstone: Full business process automation</div><div class="phase-lesson-tag lt-project">Project</div></div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-head" onclick="togglePhase(this)">
+          <div class="phase-count">04</div><div class="phase-name">Creative AI — Images, Video & Audio</div><div class="phase-week">Weeks 7–8</div><div class="phase-chevron">▾</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-lesson"><div class="phase-lesson-icon">🖼️</div><div class="phase-lesson-name">Midjourney, DALL-E, Stable Diffusion mastery</div><div class="phase-lesson-tag lt-video">Video</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🎬</div><div class="phase-lesson-name">AI video creation: Sora, Runway, Kling</div><div class="phase-lesson-tag lt-video">Video</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🎙️</div><div class="phase-lesson-name">Voice cloning & AI audio with ElevenLabs</div><div class="phase-lesson-tag lt-live">AI Workshop</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🎨</div><div class="phase-lesson-name">Project: Complete Brand Identity with AI</div><div class="phase-lesson-tag lt-project">Project</div></div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-head" onclick="togglePhase(this)">
+          <div class="phase-count">05</div><div class="phase-name">AI App & Website Builder</div><div class="phase-week">Weeks 9–11</div><div class="phase-chevron">▾</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-lesson"><div class="phase-lesson-icon">⚡</div><div class="phase-lesson-name">No-code AI development: Bolt, Cursor, Replit</div><div class="phase-lesson-tag lt-video">Video</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🌐</div><div class="phase-lesson-name">Workshop: Build & deploy a website in 1 day</div><div class="phase-lesson-tag lt-live">AI Workshop</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🤖</div><div class="phase-lesson-name">Project: Custom AI chatbot with your own data</div><div class="phase-lesson-tag lt-project">Project</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🚀</div><div class="phase-lesson-name">Project: Launch your AI SaaS MVP</div><div class="phase-lesson-tag lt-project">Project</div></div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-head" onclick="togglePhase(this)">
+          <div class="phase-count">06</div><div class="phase-name">Business AI & Launch</div><div class="phase-week">Week 12</div><div class="phase-chevron">▾</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-lesson"><div class="phase-lesson-icon">📊</div><div class="phase-lesson-name">AI for sales, marketing, and customer service</div><div class="phase-lesson-tag lt-video">Video</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">💰</div><div class="phase-lesson-name">Monetizing your AI skills: freelance & products</div><div class="phase-lesson-tag lt-video">Video</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🏗️</div><div class="phase-lesson-name">Final Capstone: Launch an AI-powered business</div><div class="phase-lesson-tag lt-project">Project</div></div>
+          <div class="phase-lesson"><div class="phase-lesson-icon">🎓</div><div class="phase-lesson-name">MindGrid AI Certification — issued & shareable</div><div class="phase-lesson-tag lt-quiz">Cert</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: ASIDE -->
+  <div class="curr-aside">
+    <div class="cert-card reveal">
+      <div class="cert-visual">
+        <div class="cert-seal">🎓</div>
+      </div>
+      <div class="cert-title">MindGrid AI Certificate</div>
+      <div class="cert-desc">Complete the 12-week curriculum and earn a shareable certificate recognized by employers and clients.</div>
+      <div class="cert-features">
+        <div class="cert-feat"><span class="cert-feat-icon">✓</span> Shareable on LinkedIn</div>
+        <div class="cert-feat"><span class="cert-feat-icon">✓</span> Verified digital credential</div>
+        <div class="cert-feat"><span class="cert-feat-icon">✓</span> Included in all paid plans</div>
+        <div class="cert-feat"><span class="cert-feat-icon">✓</span> Issued upon final project</div>
+      </div>
+      <button class="btn-full btn-full-primary" onclick="openModal()">Enroll for $7/month</button>
+      <button class="btn-full btn-full-outline" onclick="toast('✅ Already on the free plan!','💡')">Start Free</button>
+    </div>
+
+    <div class="what-you-learn reveal reveal-delay-1">
+      <div class="wyl-title">What you'll be able to do</div>
+      <div class="wyl-list">
+        <div class="wyl-item"><span class="wyl-check">→</span>Write prompts that get professional-quality results every time</div>
+        <div class="wyl-item"><span class="wyl-check">→</span>Build automated workflows that save hours per week</div>
+        <div class="wyl-item"><span class="wyl-check">→</span>Create images, videos, and audio content with AI</div>
+        <div class="wyl-item"><span class="wyl-check">→</span>Ship web apps and tools without a developer</div>
+        <div class="wyl-item"><span class="wyl-check">→</span>Integrate AI into any business function</div>
+        <div class="wyl-item"><span class="wyl-check">→</span>Earn income from your AI skills</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+```
+
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+
+<section class="section-sm" style="background:var(--navy2);border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="s-header center reveal">
+      <div class="s-tag">// Learner Stories</div>
+      <h2 class="s-title">$7 changed how they work</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="t-card reveal">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"I used to spend hours jumping between YouTube tutorials. MindGrid has every lesson in one place — and Sage explains anything I miss instantly. It's like having a private AI instructor."</p>
+        <div class="t-author">
+          <div class="t-pic">👩</div>
+          <div><div class="t-name">Amara Osei</div><div class="t-role">Freelance AI Creator · Accra, Ghana</div></div>
+        </div>
+      </div>
+      <div class="t-card reveal reveal-delay-1">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"$7 a month and I built and launched an AI SaaS with 200 users. The App Builder track walked me through every step. The AI tutor answered every question I had in seconds."</p>
+        <div class="t-author">
+          <div class="t-pic">👨</div>
+          <div><div class="t-name">Tendai Moyo</div><div class="t-role">Indie Builder · Harare, Zimbabwe</div></div>
+        </div>
+      </div>
+      <div class="t-card reveal reveal-delay-2">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"The automation track alone saved me 10 hours per week. The lessons are inside the platform — no YouTube rabbit holes. This is what online learning should have always been."</p>
+        <div class="t-author">
+          <div class="t-pic">👩</div>
+          <div><div class="t-name">Fatima Al-Rashid</div><div class="t-role">Marketing Director · Dubai, UAE</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     PRICING
+══════════════════════════════════ -->
+
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="s-header center reveal">
+      <div class="s-tag">// Pricing</div>
+      <h2 class="s-title">Simple. Honest. Affordable.</h2>
+      <p class="s-desc" style="margin:0 auto">Start free with two full tracks. Upgrade when you're ready.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <div class="price-plan">Starter</div>
+        <div class="price-amount">Free</div>
+        <div class="price-desc">forever · no credit card needed</div>
+        <div class="price-divider"></div>
+        <div class="price-features">
+          <div class="price-feature"><span class="pf-check">✓</span>2 full tracks (Prompt Eng + Foundations)</div>
+          <div class="price-feature"><span class="pf-check">✓</span>2 free video lessons per track</div>
+          <div class="price-feature"><span class="pf-check">✓</span>Sage AI Tutor — 10 questions/day</div>
+          <div class="price-feature"><span class="pf-x">✗</span><span>4 advanced Pro tracks</span></div>
+          <div class="price-feature"><span class="pf-x">✗</span><span>Unlimited AI Tutor access</span></div>
+          <div class="price-feature"><span class="pf-x">✗</span><span>Real projects & certificate</span></div>
+        </div>
+        <button class="btn-full btn-full-outline" onclick="toast('✅ You are on the free plan!','💡')">Current Plan — Free</button>
+      </div>
+
+```
+  <div class="price-card featured reveal reveal-delay-1">
+    <div class="price-popular">Most Popular</div>
+    <div class="price-plan">Builder</div>
+    <div class="price-amount"><span class="currency">$</span>7<span class="period">/mo</span></div>
+    <div class="price-desc">billed monthly · cancel anytime</div>
+    <div class="price-divider"></div>
+    <div class="price-features">
+      <div class="price-feature"><span class="pf-check">✓</span>All 6 tracks — 47 AI-taught modules</div>
+      <div class="price-feature"><span class="pf-check">✓</span>All lessons embedded — no YouTube</div>
+      <div class="price-feature"><span class="pf-check">✓</span>Unlimited Sage AI Tutor access</div>
+      <div class="price-feature"><span class="pf-check">✓</span>12 guided real-world projects</div>
+      <div class="price-feature"><span class="pf-check">✓</span>AI-generated notes & summaries</div>
+      <div class="price-feature"><span class="pf-check">✓</span>Shareable MindGrid AI Certificate</div>
+    </div>
+    <button class="btn-full btn-full-primary" onclick="openModal()">Subscribe for $7/month</button>
+  </div>
+
+  <div class="price-card reveal reveal-delay-2">
+    <div class="price-plan">Team</div>
+    <div class="price-amount"><span class="currency">$</span>49<span class="period">/mo</span></div>
+    <div class="price-desc">up to 10 seats · $4.90 per member</div>
+    <div class="price-divider"></div>
+    <div class="price-features">
+      <div class="price-feature"><span class="pf-check">✓</span>Everything in Builder plan</div>
+      <div class="price-feature"><span class="pf-check">✓</span>Team analytics dashboard</div>
+      <div class="price-feature"><span class="pf-check">✓</span>Custom learning paths per member</div>
+      <div class="price-feature"><span class="pf-check">✓</span>Admin controls & progress reports</div>
+      <div class="price-feature"><span class="pf-check">✓</span>Priority support</div>
+      <div class="price-feature"><span class="pf-check">✓</span>AI onboarding setup session</div>
+    </div>
+    <button class="btn-full btn-full-outline" onclick="toast('📧 Email us: hello@mindgrid.ai','📩')">Contact Sales</button>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- CTA BAND -->
+
+<div class="cta-band">
+  <div class="container">
+    <h2>AI is teaching right now.<br><span class="gradient-text">Are you in the room?</span></h2>
+    <p>Start free today. No experience. No instructor. No excuses. Just AI doing the teaching, and you doing the learning.</p>
+    <div class="cta-actions">
+      <button class="btn-primary-lg" onclick="openModal()">Start Learning Free →</button>
+      <button class="btn-ghost-lg" onclick="toast('📧 hello@mindgrid.ai','📩')">Talk to Us</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- FOOTER -->
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="nav-logo" style="margin-bottom:0">
+          <div class="nav-logo-mark">M</div>
+          <div class="nav-logo-text">MindGrid <span>AI</span></div>
+        </div>
+        <p class="footer-brand-desc">The AI-powered learning platform that teaches itself. Master artificial intelligence with embedded lessons, an AI tutor, and real projects — for just $7/month.</p>
+        <div class="footer-socials">
+          <button class="soc-btn" onclick="toast('𝕏 Coming soon','💡')">𝕏</button>
+          <button class="soc-btn" onclick="toast('in Coming soon','💡')">in</button>
+          <button class="soc-btn" onclick="toast('▶ Coming soon','💡')">▶</button>
+          <button class="soc-btn" onclick="toast('Discord coming soon','💡')">◈</button>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Platform</div>
+        <div class="footer-links">
+          <a href="#courses">All Tracks</a>
+          <a href="#learn">Learning Room</a>
+          <a href="#curriculum">Curriculum</a>
+          <a href="#pricing">Pricing</a>
+          <a onclick="toast('Certificate info coming soon','💡')">Certificate</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <div class="footer-links">
+          <a onclick="toast('About page coming soon','💡')">About</a>
+          <a onclick="toast('Blog coming soon','💡')">Blog</a>
+          <a onclick="toast('Careers coming soon','💡')">Careers</a>
+          <a onclick="toast('Partners coming soon','💡')">Partners</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Support</div>
+        <div class="footer-links">
+          <a onclick="toast('Ask Sage in the Learning Room!','🤖')">Help (Ask Sage)</a>
+          <a onclick="toast('hello@mindgrid.ai','📩')">Contact</a>
+          <a onclick="toast('Community coming soon','💡')">Community</a>
+          <a onclick="toast('Status: All systems operational ✓','✅')">Status</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 MindGrid AI · All rights reserved · AI-powered learning platform</div>
+      <div class="footer-legal">
+        <a onclick="toast('Privacy policy coming soon','💡')">Privacy Policy</a>
+        <a onclick="toast('Terms coming soon','💡')">Terms of Service</a>
+        <a onclick="toast('Cookie policy coming soon','💡')">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════════════════
+   ⚙️  STRIPE CONFIG
+   Replace with your real keys from:
+   https://dashboard.stripe.com
+══════════════════════════════════ */
+const STRIPE_KEY  = 'pk_test_REPLACE_WITH_YOUR_STRIPE_PUBLISHABLE_KEY';
+const STRIPE_LINK = 'https://buy.stripe.com/REPLACE_WITH_YOUR_PAYMENT_LINK';
+// Steps to get these:
+// 1. stripe.com → sign up → Developers → API Keys → copy Publishable key
+// 2. Products → Add product → $7/month recurring → Create payment link → copy URL
+
+/* ══════════════════════════════════
+   LESSON DATA
+   Add YouTube video IDs here.
+   Find any AI tutorial on YouTube,
+   copy the ID from the URL
+   e.g. youtube.com/watch?v=XXXX → 'XXXX'
+══════════════════════════════════ */
+const LESSONS = [
+  {
+    title: 'What is Prompt Engineering?',
+    track: 'Prompt Engineering',
+    lesson: 'Lesson 1 of 8',
+    dur: '12 min',
+    access: '✓ Free',
+    accessColor: 'var(--green2)',
+    vid: '1bUy-1hGZpI', // ← YouTube video ID
+    url: 'mindgrid.ai/learn/prompt-engineering/lesson-1',
+    free: true,
+    notes: `
+      <div class="notes-point"><div class="notes-bullet" style="background:rgba(37,99,235,.15);color:var(--blue2)">🎯</div><div><strong>What it is:</strong> Prompt engineering is writing precise instructions for AI models to get consistently excellent, predictable output.</div></div>
+      <div class="notes-point"><div class="notes-bullet" style="background:rgba(6,182,212,.12);color:var(--cyan2)">🧩</div><div><strong>Core formula:</strong> Role + Context + Task = Great Prompt. Always tell the AI who to be, the situation, and exactly what you need.</div></div>
+      <div class="notes-point"><div class="notes-bullet" style="background:rgba(16,185,129,.12);color:var(--green2)">⚡</div><div><strong>Why it matters:</strong> The same AI gives radically different results depending on how you write your prompt. This skill multiplies every AI tool you use.</div></div>
+      <div class="notes-point"><div class="notes-bullet" style="background:rgba(245,158,11,.12);color:var(--gold2)">📌</div><div><strong>Try now:</strong> Open any AI and add "You are an expert [role]" before your next request. Compare the result.</div></div>`
+  },
+  {
+    title: 'Zero-shot vs Few-shot Prompting',
+    track: 'Prompt Engineering',
+    lesson: 'Lesson 2 of 8',
+    dur: '15 min',
+    access: '✓ Free',
+    accessColor: 'var(--green2)',
+    vid: 'wVzuvf9D9BU', // ← YouTube video ID
+    url: 'mindgrid.ai/learn/prompt-engineering/lesson-2',
+    free: true,
+    notes: `
+      <div class="notes-point"><div class="notes-bullet" style="background:rgba(37,99,235,.15);color:var(--blue2)">🔵</div><div><strong>Zero-shot:</strong> Giving AI a task with no examples. Relies entirely on its training. Good for simple, clear tasks.</div></div>
+      <div class="notes-point"><div class="notes-bullet" style="background:rgba(245,158,11,.12);color:var(--gold2)">🟡</div><div><strong>Few-shot:</strong> Providing 2–5 examples before your actual request. Dramatically improves output quality and consistency.</div></div>
+      <div class="notes-point"><div class="notes-bullet" style="background:rgba(16,185,129,.12);color:var(--green2)">✅</div><div><strong>Rule of thumb:</strong> When output format or style matters — always use few-shot. When speed matters and the task is simple — use zero-shot.</div></div>
+      <div class="notes-point"><div class="notes-bullet" style="background:rgba(6,182,212,.12);color:var(--cyan2)">📌</div><div><strong>Practice:</strong> Run the same prompt zero-shot and few-shot. The difference in quality will change how you work forever.</div></div>`
+  }
+];
+
+let currentLessonIdx = 0;
+let isPro = false;
+
+function loadLesson(idx) {
+  const l = LESSONS[idx];
+  if (!l) return;
+  currentLessonIdx = idx;
+
+  // Update player
+  document.getElementById('vidTitle').textContent = l.title;
+  document.getElementById('vidDur').textContent = '⏱ ' + l.dur;
+  document.getElementById('vidAccess').textContent = l.access;
+  document.getElementById('vidAccess').style.color = l.accessColor;
+  document.getElementById('playerUrl').textContent = l.url;
+  document.getElementById('lessonNotes').innerHTML = l.notes;
+
+  // Load video
+  document.getElementById('vidLoad').classList.remove('gone');
+  document.getElementById('vidFrame').src =
+    `https://www.youtube.com/embed/${l.vid}?rel=0&modestbranding=1&showinfo=0&color=white&iv_load_policy=3&fs=1`;
+
+  // Update playlist
+  document.querySelectorAll('.playlist-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+
+  // Update tutor context
+  addAIMsg(`I've loaded <strong>${l.title}</strong>. What would you like me to explain from this lesson?`);
+}
+
+function nextLesson() {
+  const next = currentLessonIdx + 1;
+  if (next < LESSONS.length && (LESSONS[next].free || isPro)) {
+    loadLesson(next);
+  } else if (next < LESSONS.length && !isPro) {
+    openModal();
+    toast('🔒 This lesson requires Pro — just $7/month', '💡');
+  } else {
+    toast('🎉 You completed the free lessons! Upgrade to continue.', '✨');
+    openModal();
+  }
+}
+
+function gatedLesson() {
+  if (isPro) return;
+  openModal();
+  toast('🔒 Pro lesson — unlock for $7/month', '💡');
+}
+
+/* ══════════════════════════════════
+   AI TUTOR — Sage
+══════════════════════════════════ */
+const SYSTEM = `You are Sage, the AI tutor for MindGrid AI — a platform teaching artificial intelligence skills. You are warm, clear, encouraging, and practical. You explain concepts simply but never dumbing them down. You use short paragraphs and real examples. You never say "I cannot" — always find a way to help. Keep responses concise: 3–5 sentences unless more detail is asked for. Always end with a short practical tip or follow-up question. The current lesson is: "${LESSONS[0].title}" — Prompt Engineering.`;
+
+let chatHistory = [];
+let sageBusy = false;
+
+async function askSage() {
+  const field = document.getElementById('tutorInput');
+  const msg = field.value.trim();
+  if (!msg || sageBusy) return;
+
+  field.value = '';
+  field.style.height = 'auto';
+  addUserMsg(msg);
+  chatHistory.push({ role: 'user', content: msg });
+
+  document.getElementById('tutorSend').disabled = true;
+  sageBusy = true;
+
+  // Typing indicator
+  const typing = document.createElement('div');
+  typing.className = 't-msg t-msg-ai';
+  typing.id = 'sageTyping';
+  typing.innerHTML = '<div class="t-msg-label">Sage</div><div class="t-typing"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>';
+  document.getElementById('tutorMsgs').appendChild(typing);
+  scrollTutor();
+
+  try {
+    const currentTitle = LESSONS[currentLessonIdx]?.title || 'Prompt Engineering';
+    const sysWithCtx = SYSTEM.replace(LESSONS[0].title, currentTitle);
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': '',
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 400,
+        system: sysWithCtx,
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || fallback(msg);
+    chatHistory.push({ role: 'assistant', content: reply });
+    typing.remove();
+    addAIMsg(reply);
+  } catch {
+    typing.remove();
+    addAIMsg(fallback(msg));
+  }
+
+  document.getElementById('tutorSend').disabled = false;
+  sageBusy = false;
+  field.focus();
+}
+
+function fallback(msg) {
+  const m = msg.toLowerCase();
+  if (m.includes('simpl') || m.includes('explain'))
+    return "Think of prompt engineering like giving someone very precise directions. Vague directions get vague results. Specific, structured prompts get professional-quality output every time. The formula is simple: Role + Context + Task. Try it on your next AI interaction! 🎯";
+  if (m.includes('example') || m.includes('business'))
+    return "Here's a real example — instead of 'write a sales email', try: 'You are a senior B2B copywriter. Write a 5-sentence cold email to a CFO at a mid-size tech company about our AI analytics tool. Tone: professional, direct, no fluff.' The second prompt gives you something you can actually send. 📧";
+  if (m.includes('practice') || m.includes('start'))
+    return "Best first practice: take any task you do regularly and write a reusable prompt for it. Add a role, give context, specify the exact format you want. Save it as a template. Do this for 5 tasks this week and you'll immediately see hours saved. 💪";
+  if (m.includes('google') || m.includes('search'))
+    return "Great question! Google searches retrieve existing information from the web. Prompt engineering generates new, customized content, analysis, or solutions from an AI model. Google finds what exists — AI creates what you need specifically for your situation. Completely different tools for different jobs. 🔍";
+  return "Prompt engineering is one of the highest-leverage skills in the AI era. The core insight: AI output quality is almost entirely determined by input quality. Better prompts → better results, every single time. What specific part of the lesson would you like me to dig into? 🧠";
+}
+
+function addUserMsg(text) {
+  const msgs = document.getElementById('tutorMsgs');
+  const d = document.createElement('div');
+  d.className = 't-msg t-msg-user';
+  d.innerHTML = `<div class="t-msg-label">You</div><div class="t-bubble">${esc(text)}</div>`;
+  msgs.appendChild(d);
+  scrollTutor();
+  hideSuggestions();
+}
+
+function addAIMsg(html) {
+  const msgs = document.getElementById('tutorMsgs');
+  const d = document.createElement('div');
+  d.className = 't-msg t-msg-ai';
+  d.innerHTML = `<div class="t-msg-label">Sage</div><div class="t-bubble">${html}</div>`;
+  msgs.appendChild(d);
+  scrollTutor();
+}
+
+function scrollTutor() {
+  const msgs = document.getElementById('tutorMsgs');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function quickAsk(q) {
+  document.getElementById('tutorInput').value = q;
+  askSage();
+}
+
+function hideSuggestions() {
+  const el = document.getElementById('tutorSuggestions');
+  if (el) el.style.display = 'none';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askSage(); }
+}
+
+function esc(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ══════════════════════════════════
+   STRIPE
+══════════════════════════════════ */
+let stripeInst, cardEl;
+
+function openModal() {
+  document.getElementById('payModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (!stripeInst && !STRIPE_KEY.includes('REPLACE')) {
+    try {
+      stripeInst = Stripe(STRIPE_KEY);
+      const els = stripeInst.elements({
+        appearance: {
+          theme: 'night',
+          variables: { colorPrimary: '#2563eb', colorBackground: '#131c30', colorText: '#f8fafc', fontFamily: 'Plus Jakarta Sans, sans-serif', borderRadius: '10px' }
+        }
+      });
+      cardEl = els.create('card', {
+        style: { base: { iconColor: '#94a3b8', color: '#f8fafc', fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', '::placeholder': { color: '#475569' } } }
+      });
+      cardEl.mount('#card-el');
+      cardEl.on('focus', () => document.getElementById('cardWrap').classList.add('focused'));
+      cardEl.on('blur', () => document.getElementById('cardWrap').classList.remove('focused'));
+    } catch(e) { console.log('Stripe init:', e); }
+  }
+}
+
+function closeModal() {
+  document.getElementById('payModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('payModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('payModal')) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function goStripe() {
+  if (STRIPE_LINK.includes('REPLACE')) {
+    toast('⚙️ Add your Stripe Payment Link to go live. Check the deployment guide.', '💡');
+    return;
+  }
+  window.open(STRIPE_LINK, '_blank');
+}
+
+async function doPayment() {
+  const email = document.getElementById('payEmail').value.trim();
+  const errBox = document.getElementById('payErr');
+
+  if (!email || !email.includes('@')) {
+    errBox.textContent = 'Please enter a valid email address.';
+    errBox.style.display = 'block';
+    return;
+  }
+  errBox.style.display = 'none';
+
+  // Demo mode if keys not set
+  if (STRIPE_KEY.includes('REPLACE')) {
+    setPayLoading(true);
+    await new Promise(r => setTimeout(r, 1800));
+    setPayLoading(false);
+    showSuccess();
+    return;
+  }
+  goStripe();
+}
+
+function setPayLoading(on) {
+  document.getElementById('payBtn').disabled = on;
+  document.getElementById('payBtnLabel').style.display = on ? 'none' : 'flex';
+  document.getElementById('paySpinner').style.display = on ? 'block' : 'none';
+}
+
+function showSuccess() {
+  document.getElementById('modalForm').style.display = 'none';
+  document.getElementById('modalSuccess').style.display = 'block';
+}
+
+function grantAccess() {
+  isPro = true;
+  closeModal();
+  // Unlock all lessons in playlist
+  document.querySelectorAll('.pl-lock').forEach(el => { el.textContent = '▶'; el.style.color = 'var(--blue2)'; });
+  document.querySelectorAll('.playlist-item').forEach(el => { el.onclick = null; });
+  document.querySelectorAll('.playlist-item').forEach((el, i) => {
+    if (i < LESSONS.length) el.onclick = () => loadLesson(i);
+    else el.onclick = () => toast('🚀 More lessons coming soon!', '💡');
+  });
+  // Unlock course cards
+  document.querySelectorAll('.course-pro-lock').forEach(el => el.remove());
+  document.querySelectorAll('.badge-pro').forEach(el => {
+    el.textContent = '✓ Unlocked'; el.className = 'badge badge-free';
+  });
+  // Reset modal for future
+  setTimeout(() => {
+    document.getElementById('modalForm').style.display = 'block';
+    document.getElementById('modalSuccess').style.display = 'none';
+  }, 500);
+  toast('🎉 Full access unlocked! All 47 modules & Sage are yours.', '🚀');
+}
+
+/* ══════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════ */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ══════════════════════════════════
+   COUNTER ANIMATION
+══════════════════════════════════ */
+document.querySelectorAll('[data-count]').forEach(el => {
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      const target = parseInt(el.dataset.count);
+      const suffix = el.dataset.suffix || '';
+      const prefix = el.dataset.prefix || '';
+      let cur = 0; const step = target / (1600 / 16);
+      const t = setInterval(() => {
+        cur = Math.min(cur + step, target);
+        el.textContent = prefix + Math.floor(cur).toLocaleString() + suffix;
+        if (cur >= target) clearInterval(t);
+      }, 16);
+      obs.unobserve(el);
+    }
+  }, { threshold: 0.5 });
+  obs.observe(el);
+});
+
+/* ══════════════════════════════════
+   CURRICULUM ACCORDION
+══════════════════════════════════ */
+function togglePhase(head) {
+  const phase = head.parentElement;
+  const wasOpen = phase.classList.contains('open');
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('open'));
+  if (!wasOpen) phase.classList.add('open');
+}
+
+/* ══════════════════════════════════
+   TOAST
+══════════════════════════════════ */
+let toastTimer;
+function toast(msg, icon = '✓') {
+  clearTimeout(toastTimer);
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toast').classList.add('show');
+  toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 3500);
+}
+
+/* ══════════════════════════════════
+   MISC
+══════════════════════════════════ */
+function scrollTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+// Auto-grow tutor input
+document.getElementById('tutorInput').addEventListener('input', function () {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+});
+
+// Rotating hero tag
+const heroTags = [
+  'AI-powered learning — no instructor required',
+  'Lessons embedded — no YouTube redirect',
+  'Sage AI Tutor available 24/7',
+  'From zero to AI builder in 12 weeks',
+  'Only $7/month — cancel anytime'
+];
+let heroTagIdx = 0;
+const heroTagEl = document.getElementById('heroTag');
+setInterval(() => {
+  heroTagIdx = (heroTagIdx + 1) % heroTags.length;
+  heroTagEl.style.opacity = '0';
+  setTimeout(() => {
+    heroTagEl.textContent = heroTags[heroTagIdx];
+    heroTagEl.style.opacity = '1';
+    heroTagEl.style.transition = 'opacity .4s';
+  }, 300);
+}, 4000);
+
+// Vid frame load
+document.getElementById('vidFrame').addEventListener('load', () => {
+  setTimeout(() => document.getElementById('vidLoad').classList.add('gone'), 300);
+});
+</script>
+
+</body>
+</html>
